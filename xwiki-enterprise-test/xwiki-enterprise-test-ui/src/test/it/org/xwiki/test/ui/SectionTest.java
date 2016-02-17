@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.xwiki.administration.test.po.AdministrationPage;
 import org.xwiki.administration.test.po.LocalizationAdministrationSectionPage;
+import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.test.ui.browser.IgnoreBrowser;
 import org.xwiki.test.ui.browser.IgnoreBrowsers;
 import org.xwiki.test.ui.po.ViewPage;
@@ -71,39 +72,6 @@ public class SectionTest extends AbstractTest
         }
 
         return new ViewPage();
-    }
-
-    /**
-     * Verify edit section is working in both wiki and wysiwyg editors (xwiki/1.0).
-     * See XWIKI-174: Sectional editing.
-     */
-    @Test
-    @IgnoreBrowsers({
-    @IgnoreBrowser(value = "internet.*", version = "8\\.*", reason="See http://jira.xwiki.org/browse/XE-1146"),
-    @IgnoreBrowser(value = "internet.*", version = "9\\.*", reason="See http://jira.xwiki.org/browse/XE-1177")
-    })
-    public void testSectionEditInEditorWhenSyntax10()
-    {
-        ViewPage vp = createTestPages("xwiki/1.0");
-
-        // Edit the second section in the wysiwyg editor
-        WYSIWYGEditPage wysiwygEditPage = vp.editSection(2);
-        Assert.assertEquals("Section2\nContent2\nSection3\nContent3", wysiwygEditPage.getContent());
-
-        // Edit the second section in the wiki editor
-        WikiEditPage wikiEditPage = wysiwygEditPage.editWiki();
-        Assert.assertEquals("1 Section2 Content2 1.1 Section3 Content3",
-            wikiEditPage.getContent());
-        wikiEditPage.clickCancel();
-
-        // Edit the third section in the wiki editor
-        Assert.assertEquals("1.1 Section3 Content3",
-            vp.editSection(3).editWiki().getContent());
-        wikiEditPage.clickCancel();
-
-        // Edit the fourth section in the wiki editor
-        Assert.assertEquals("1 Section4 Content4",
-            vp.editSection(4).editWiki().getContent());
     }
 
     /**
@@ -155,24 +123,6 @@ public class SectionTest extends AbstractTest
     }
 
     /**
-     * Verify section save does not override the whole document content (xwiki/1.0).
-     * See XWIKI-4033: When saving after section edit entire page is overwritten.
-     */
-    @Test
-    @IgnoreBrowsers({
-    @IgnoreBrowser(value = "internet.*", version = "8\\.*", reason="See http://jira.xwiki.org/browse/XE-1146"),
-    @IgnoreBrowser(value = "internet.*", version = "9\\.*", reason="See http://jira.xwiki.org/browse/XE-1177")
-    })
-    public void testSectionSaveDoesNotOverwriteTheWholeContentWhenSyntax10()
-    {
-        ViewPage vp = createTestPages("xwiki/1.0");
-        vp.editSection(3).editWiki().clickSaveAndView();
-        WikiEditPage wep = vp.editWiki();
-        Assert.assertEquals("1 Section1 Content1 1 Section2 Content2 1.1 Section3 Content3 1 Section4 Content4",
-            wep.getContent());
-    }
-
-    /**
      * Verify section save does not override the whole document content (xwiki/2.0).
      * See XWIKI-4033: When saving after section edit entire page is overwritten.
      */
@@ -199,10 +149,12 @@ public class SectionTest extends AbstractTest
     @Test
     public void testSectionSaveDoesNotOverwriteTheTitle() throws Exception
     {
+        LocalDocumentReference pageReference = new LocalDocumentReference(getTestClassName(), getTestMethodName());
+        
         // Create the English version.
         setLanguageSettings(false, "en", "en");
-        getUtil().rest().deletePage(getTestClassName(), getTestMethodName());
-        getUtil().createPage(getTestClassName(), getTestMethodName(), "Original content", "Original title");
+        getUtil().rest().delete(pageReference);
+        getUtil().rest().savePage(pageReference, "Original content", "Original title");
 
         try {
             // Create the French version.
@@ -211,13 +163,13 @@ public class SectionTest extends AbstractTest
             parameters.put("language", "fr");
             parameters.put("title", "Translated title");
             parameters.put("content", "= Chapter 1 =\n\n Once upon a time ...");
-            getUtil().gotoPage(getTestClassName(), getTestMethodName(), "save", parameters);
+            getUtil().gotoPage(pageReference, "save", parameters);
 
             // Switch back to monolingual with French as default language.
             setLanguageSettings(false, "fr", "fr");
 
             // Edit and save a document section and check if the document title was overwritten.
-            getUtil().gotoPage(getTestClassName(), getTestMethodName(), "edit", "editor=wiki&section=1");
+            getUtil().gotoPage(pageReference, "edit", "editor=wiki&section=1");
             Assert.assertEquals("Translated title", new WikiEditPage().clickSaveAndView().getDocumentTitle());
         } finally {
             // Restore language settings.

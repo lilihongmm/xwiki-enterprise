@@ -25,11 +25,13 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.xwiki.index.test.po.CopyPage;
-import org.xwiki.index.test.po.DocumentPicker;
+import org.xwiki.index.tree.test.po.DocumentPickerModal;
+import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.test.ui.browser.IgnoreBrowser;
 import org.xwiki.test.ui.po.AttachmentsPane;
-import org.xwiki.test.ui.po.CopyConfirmationPage;
 import org.xwiki.test.ui.po.CopyOverwritePromptPage;
+import org.xwiki.test.ui.po.CopyStatusPage;
+import org.xwiki.test.ui.po.DocumentPicker;
 import org.xwiki.test.ui.po.ViewPage;
 
 /**
@@ -47,7 +49,7 @@ public class CopyPageTest extends AbstractTest
 
     private static final String OVERWRITTEN_PAGE_CONTENT = "This page is used for overwritten copy purposes";
 
-    private static final String COPY_SUCCESSFUL = "successfully copied to";
+    private static final String COPY_SUCCESSFUL = "Done.";
 
     private static final String OVERWRITE_PROMPT1 = "Warning: The page ";
 
@@ -104,11 +106,11 @@ public class CopyPageTest extends AbstractTest
         documentPicker.waitForLocation(Arrays.asList("", targetSpaceName, targetPageName));
 
         // Click copy button
-        CopyConfirmationPage copyConfirmationPage = copyPage.clickCopyButton();
+        CopyStatusPage copyStatusPage = copyPage.clickCopyButton().waitUntilFinished();
 
         // Check successful copy confirmation
-        Assert.assertTrue(copyConfirmationPage.getInfoMessage().contains(COPY_SUCCESSFUL));
-        viewPage = copyConfirmationPage.goToNewPage();
+        Assert.assertEquals(COPY_SUCCESSFUL, copyStatusPage.getInfoMessage());
+        viewPage = copyStatusPage.gotoNewPage();
 
         Assert.assertEquals(Arrays.asList("", targetSpaceName, targetPageName), viewPage.getBreadcrumb().getPath());
         // Verify that the copied title is modified to be the new page name since it was set to be the page name
@@ -137,7 +139,8 @@ public class CopyPageTest extends AbstractTest
         getUtil().rest().deletePage(targetSpaceName, targetPageName);
 
         // Create a new page that will be overwritten.
-        getUtil().createPage(targetSpaceName, targetPageName, OVERWRITTEN_PAGE_CONTENT, targetPageName);
+        getUtil().rest().savePage(new LocalDocumentReference(targetSpaceName, targetPageName),
+            OVERWRITTEN_PAGE_CONTENT, targetPageName);
 
         // Create a new page that will be copied.
         ViewPage viewPage = getUtil().createPage(sourceSpaceName, sourcePageName, PAGE_CONTENT, sourcePageName);
@@ -149,8 +152,10 @@ public class CopyPageTest extends AbstractTest
         // Fill the target destination the page to be copied to.
         DocumentPicker documentPicker = copyPage.getDocumentPicker();
         documentPicker.setTitle(targetPageName);
-        documentPicker.browseDocuments().waitForDocumentSelected(sourceSpaceName, "WebHome")
-            .selectDocument(targetSpaceName, "WebHome");
+        documentPicker.browseDocuments();
+        DocumentPickerModal documentPickerModal = new DocumentPickerModal();
+        documentPickerModal.waitForDocumentSelected(sourceSpaceName, "WebHome").selectDocument(targetSpaceName,
+            "WebHome");
         documentPicker.waitForLocation(Arrays.asList("", targetSpaceName, targetPageName));
         Assert.assertEquals(targetSpaceName, copyPage.getTargetSpaceName());
 
@@ -198,11 +203,11 @@ public class CopyPageTest extends AbstractTest
 
         // Copy and confirm overwrite
         copyOverwritePrompt = copyPage.clickCopyButtonExpectingOverwritePrompt();
-        CopyConfirmationPage copyConfirmationPage = copyOverwritePrompt.clickCopyButton();
+        CopyStatusPage copyStatusPage = copyOverwritePrompt.clickCopyButton().waitUntilFinished();
 
         // Check successful copy confirmation
-        Assert.assertTrue(copyConfirmationPage.getInfoMessage().contains(COPY_SUCCESSFUL));
-        viewPage = copyConfirmationPage.goToNewPage();
+        Assert.assertEquals(COPY_SUCCESSFUL, copyStatusPage.getInfoMessage());
+        viewPage = copyStatusPage.gotoNewPage();
 
         // Verify that the copied title is modified to be the new page name since it was set to be the page name
         // originally.

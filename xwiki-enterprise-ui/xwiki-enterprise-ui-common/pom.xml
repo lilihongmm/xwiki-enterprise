@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.xwiki.enterprise</groupId>
     <artifactId>xwiki-enterprise-ui</artifactId>
-    <version>7.3-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
   </parent>
   <artifactId>xwiki-enterprise-ui-common</artifactId>
   <name>XWiki Enterprise - UI - Common</name>
@@ -88,12 +88,6 @@
     </dependency>
     <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-statistics-ui</artifactId>
-      <version>${platform.version}</version>
-      <type>xar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-search-solr-ui</artifactId>
       <version>${platform.version}</version>
       <type>xar</type>
@@ -107,12 +101,6 @@
     <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-office-ui</artifactId>
-      <version>${platform.version}</version>
-      <type>xar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-webdav-ui</artifactId>
       <version>${platform.version}</version>
       <type>xar</type>
     </dependency>
@@ -196,12 +184,6 @@
     </dependency>
     <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-colorthemes-ui</artifactId>
-      <version>${platform.version}</version>
-      <type>xar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-activitystream-ui</artifactId>
       <version>${platform.version}</version>
       <type>xar</type>
@@ -269,6 +251,12 @@
     <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-xclass-ui</artifactId>
+      <version>${platform.version}</version>
+      <type>xar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-refactoring-ui</artifactId>
       <version>${platform.version}</version>
       <type>xar</type>
     </dependency>

@@ -19,6 +19,9 @@
  */
 package org.xwiki.test.selenium.framework;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.junit.Assert;
 import org.openqa.selenium.By;
 
@@ -51,23 +54,24 @@ public class FlamingoSkinExecutor extends ColibriSkinExecutor
     @Override
     public boolean isAuthenticated()
     {
-        return getTest().isElementPresent("//div[@id='xwikimainmenu']//li[contains(@class, 'navbar-avatar')]");
+        return getTest().isElementPresentWithoutWaiting(By.xpath(
+                "//div[@id='xwikimainmenu']//li[contains(@class, 'navbar-avatar')]"));
     }
 
     @Override
     public boolean isAuthenticated(String username)
     {
-        return getTest().isElementPresent(
-            "//div[@id='xwikimainmenu']//li[contains(@class, 'navbar-avatar')]"
-                + "//a[contains(@href, '/xwiki/bin/view/XWiki/" + username + "')]");
+        return getTest().isElementPresentWithoutWaiting(By.xpath(
+                "//div[@id='xwikimainmenu']//li[contains(@class, 'navbar-avatar')]"
+                        + "//a[contains(@href, '/xwiki/bin/view/XWiki/" + username + "')]"));
     }
 
     @Override
     public boolean isAuthenticationMenuPresent()
     {
         openDrawer();
-        boolean isAuthenticationMenuPresent = getTest().isElementPresent("//a[@id = 'tmLogin']")
-                    || getTest().isElementPresent("//a[@id = 'tmLogout']");
+        boolean isAuthenticationMenuPresent = getTest().isElementPresentWithoutWaiting(By.xpath("//a[@id = 'tmLogin']"))
+                    || getTest().isElementPresentWithoutWaiting(By.xpath("//a[@id = 'tmLogout']"));
         closeDrawer();
         return isAuthenticationMenuPresent;
     }
@@ -136,10 +140,17 @@ public class FlamingoSkinExecutor extends ColibriSkinExecutor
         getTest().clickLinkWithLocator(menuItemId);
     }
 
+    private void clickAdminActionsSubMenuEntry(String menuItemId)
+    {
+        // Click on the arrow in the edit button
+        getTest().clickLinkWithLocator("//div[@id = 'tmAdminActions']/a[contains(@role, 'button')]");
+        getTest().clickLinkWithLocator(menuItemId);
+    }
+
     @Override
     public void clickCopyPage()
     {
-        clickMoreActionsMenuItem("tmActionCopy");
+        clickAdminActionsSubMenuEntry("tmActionCopy");
     }
 
     @Override
@@ -154,5 +165,29 @@ public class FlamingoSkinExecutor extends ColibriSkinExecutor
         openDrawer();
         // Click the "Administer Wiki" link.
         getTest().getSelenium().click("tmAdminWiki");
+    }
+
+    @Override
+    public boolean copyPage(String spaceName, String pageName, String targetSpaceName, String targetPageName)
+    {
+        StringBuilder queryString = new StringBuilder("xpage=copy");
+        queryString.append("&form_token=").append(encodeURLParameter(getTest().getSecretToken()));
+        queryString.append("&sourceSpaceName=").append(encodeURLParameter(spaceName));
+        queryString.append("&sourcePageName=").append(encodeURLParameter(pageName));
+        queryString.append("&targetSpaceName=").append(encodeURLParameter(targetSpaceName));
+        queryString.append("&targetPageName=").append(encodeURLParameter(targetPageName));
+        String copyURL = getTest().getUrl(spaceName, pageName, "view", queryString.toString());
+        getTest().open(copyURL);
+        return getTest().getDriver().hasElement(By.cssSelector(".xcontent .successmessage"));
+    }
+
+    private String encodeURLParameter(String value)
+    {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Shouldn't happen.
+            return null;
+        }
     }
 }

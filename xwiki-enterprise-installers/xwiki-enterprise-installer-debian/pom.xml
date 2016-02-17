@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.xwiki.enterprise</groupId>
     <artifactId>xwiki-enterprise-installers</artifactId>
-    <version>7.3-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
   </parent>
   <artifactId>xwiki-enterprise-installer-debian</artifactId>
   <name>XWiki Enterprise - Installer - Debian</name>
@@ -38,7 +38,7 @@
     <module>xwiki-enterprise-installer-debian-tomcat</module>
   </modules>
   <properties>
-    <jdeb.version>1.4</jdeb.version>
+    <jdeb.version>1.5</jdeb.version>
     <debian.maintainer>XWiki Team (devs@xwiki.org)</debian.maintainer>
     <debian.license>LGPL 2.1</debian.license>
     <debian.xe.description>

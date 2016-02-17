@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.xwiki.commons</groupId>
     <artifactId>xwiki-commons-pom</artifactId>
-    <version>7.3-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
     <!-- Note: Do not modify the <relativePath> tag here as this can cause issues. See the pom.xml for xwiki-platform
          for more details. By using an empty value we force Maven to resolve the parent from the Maven repositories,
          see http://maven.apache.org/ref/3.2.3/maven-model/maven.html#class_parent -->
@@ -33,7 +33,7 @@
   </parent>
   <groupId>org.xwiki.enterprise</groupId>
   <artifactId>xwiki-enterprise</artifactId>
-  <version>7.3-SNAPSHOT</version>
+  <version>8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>XWiki Enterprise - Parent POM</name>
   <description>XWiki Enterprise - Parent POM</description>
@@ -92,7 +92,6 @@
   com.xpn.xwiki.plugin.mail.MailPlugin,\
   com.xpn.xwiki.plugin.packaging.PackagePlugin,\
   com.xpn.xwiki.plugin.svg.SVGPlugin,\
-  com.xpn.xwiki.plugin.charts.ChartingPlugin,\
   com.xpn.xwiki.plugin.fileupload.FileUploadPlugin,\
   com.xpn.xwiki.plugin.image.ImagePlugin,\
   com.xpn.xwiki.plugin.zipexplorer.ZipExplorerPlugin,\
@@ -130,7 +129,7 @@
 
     <!-- Version of JDBC connectors we want to use in our distribution and when using build tools -->
     <hsqldb.version>2.3.3</hsqldb.version>
-    <mysql.version>5.1.36</mysql.version>
+    <mysql.version>5.1.38</mysql.version>
     <derby.version>10.11.1.1</derby.version>
     <pgsql.version>9.4-1201-jdbc41</pgsql.version>
 
@@ -146,11 +145,9 @@
       org.xwiki.platform:xwiki-platform-administration-ui,
       org.xwiki.platform:xwiki-platform-scheduler-ui,
       org.xwiki.platform:xwiki-platform-watchlist-ui,
-      org.xwiki.platform:xwiki-platform-statistics-ui,
       org.xwiki.platform:xwiki-platform-search-solr-ui,
       org.xwiki.platform:xwiki-platform-search-ui,
       org.xwiki.platform:xwiki-platform-office-ui,
-      org.xwiki.platform:xwiki-platform-webdav-ui,
       org.xwiki.platform:xwiki-platform-tag-ui,
       org.xwiki.platform:xwiki-platform-rendering-wikimacro-ui,
       org.xwiki.platform:xwiki-platform-annotation-ui,
@@ -165,7 +162,6 @@
       org.xwiki.platform:xwiki-platform-logging-ui,
       org.xwiki.platform:xwiki-platform-help-ui,
       org.xwiki.platform:xwiki-platform-uiextension-ui,
-      org.xwiki.platform:xwiki-platform-colorthemes-ui,
       org.xwiki.platform:xwiki-platform-activitystream-ui,
       org.xwiki.platform:xwiki-platform-messagestream-ui,
       org.xwiki.platform:xwiki-platform-sandbox,
@@ -339,7 +335,7 @@
         <xwiki.db.jdbc.groupId>mysql</xwiki.db.jdbc.groupId>
         <xwiki.db.jdbc.artifactId>mysql-connector-java</xwiki.db.jdbc.artifactId>
         <xwiki.db.jdbc.version>${mysql.version}</xwiki.db.jdbc.version>
-        <xwiki.db.connection.url>jdbc:mysql://localhost/xwiki?useServerPrepStmts=false&amp;amp;amp;useUnicode=true&amp;amp;amp;characterEncoding=UTF-8</xwiki.db.connection.url>
+        <xwiki.db.connection.url>jdbc:mysql://localhost/xwiki</xwiki.db.connection.url>
         <xwiki.db.connection.username>xwiki</xwiki.db.connection.username>
         <xwiki.db.connection.password>xwiki</xwiki.db.connection.password>
         <xwiki.db.connection.driver_class>com.mysql.jdbc.Driver</xwiki.db.connection.driver_class>
